@@ -12,6 +12,7 @@
 /build
 
 /public/charting_library
+/src/charting_library.min.js
 
 # misc
 .DS_Store

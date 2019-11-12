@@ -88,11 +88,11 @@ class DataFeeds {
         for ( let i of res.data ) {
           data.push({
             time: Number(i[0]),
-            open: i[1],
-            close: i[4],
-            high: i[2],
-            low: i[3],
-            volume: i[5],
+            open: Number(i[1]),
+            close: Number(i[4]),
+            high: Number(i[2]),
+            low: Number(i[3]),
+            volume: Number(i[5]),
           });
         }
         onDataCallback(data, { noData: !data.length });
@@ -108,11 +108,11 @@ class DataFeeds {
 
       onRealTimeCallback({
         time: Number(bar.t),
-        open: bar.o,
-        close: bar.c,
-        high: bar.h,
-        low: bar.l,
-        volume: bar.v,
+        open: Number(bar.o),
+        close: Number(bar.c),
+        high: Number(bar.h),
+        low: Number(bar.l),
+        volume: Number(bar.v),
       });
     });
   }

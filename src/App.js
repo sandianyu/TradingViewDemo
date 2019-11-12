@@ -57,17 +57,17 @@ class App extends React.Component {
     });
 
     tv.onChartReady(() => {
-      // todo
-      // const chart = tv.chart();
+      const chart = tv.chart();
 
-      // const colors = ["#e0d283", "#92c580", "#8dc1d9"];
-      // [5, 10, 30].forEach((time, index) => {
-      //   chart.createStudy("Moving Average", false, false, [time, 'close', 0], {
-      //     'Plot.linewidth': 2,
-      //     "plot.color.0": colors[index],
-      //     "precision": 2
-      //   });
-      // });
+      // 出现均线在0刻度，注意数据类型为number
+      const colors = ["#e0d283", "#92c580", "#8dc1d9"];
+      [5, 10, 30].forEach((time, index) => {
+        chart.createStudy("Moving Average", false, false, [time, 'close', 0], {
+          'Plot.linewidth': 2,
+          "plot.color.0": colors[index],
+          "precision": 2
+        });
+      });
     });
   }
 

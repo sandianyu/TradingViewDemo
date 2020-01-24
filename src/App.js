@@ -1,4 +1,5 @@
 import React from 'react';
+import pako from 'pako';
 import { widget, version } from './charting_library.min.js';
 import DataFeeds from './datafeed';
 
@@ -11,9 +12,59 @@ class App extends React.Component {
   componentDidMount() {
     console.log(version());
 
+    const store = {
+      ws: new WebSocket("wss://api.huobiasia.vip/ws"),
+      onDataCallback: null,
+      onRealTimeCallback: null,
+      to: null,
+    };
+
+    store.ws.onmessage = e => {
+      const reader = new FileReader();
+  
+      reader.onload = e => {
+        const res = JSON.parse(pako.ungzip(reader.result, {to: "string"}));
+  
+        if (res.ping) {
+          store.ws.send(JSON.stringify({pong: new Date().getTime()}));
+        }
+  
+        if (res.rep) {
+          let datas = [];
+          for (let data of res.data) {
+            datas.push({
+              time: data.id * 1000,
+              close: data.close,
+              open: data.open,
+              high: data.high,
+              low: data.low,
+              volume: data.amount
+            });
+          }
+  
+          store.onDataCallback(datas, {noData: !datas.length});
+        }
+  
+        if (res.tick) {
+          const data = res.tick;
+  
+          store.onRealTimeCallback({
+            time: data.id * 1000,
+            volume: data.amount,
+            close: data.close,
+            open: data.open,
+            high: data.high,
+            low: data.lows
+          });
+        }
+      };
+  
+      reader.readAsArrayBuffer(e.data);
+    };
+
     const tv = new widget({
       debug: true,
-      symbol: "BTCUSDT",
+      symbol: "btcusdt",
       timezone: "Asia/Shanghai",
       fullscreen: true,
       interval: '5',
@@ -21,7 +72,7 @@ class App extends React.Component {
       library_path: "/charting_library/",
       locale: "en",
       autosize: true,
-      datafeed: new DataFeeds(),
+      datafeed: new DataFeeds(store),
       theme: "Dark",
       favorites: {
         intervals: ['1', '5', '15', '30', '60', "240", '1D']

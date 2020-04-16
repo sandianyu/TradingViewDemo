@@ -5,7 +5,7 @@ import DataFeeds from './datafeed';
 
 const toDouble = (time) => {
   if (String(time).length < 2) return "0" + time;
-  return time
+  return time;
 };
 
 class App extends React.Component {
@@ -23,10 +23,10 @@ class App extends React.Component {
       const reader = new FileReader();
   
       reader.onload = e => {
-        const res = JSON.parse(pako.ungzip(reader.result, {to: "string"}));
+        const res = JSON.parse(pako.ungzip(reader.result, { to: "string" }));
   
         if (res.ping) {
-          store.ws.send(JSON.stringify({pong: new Date().getTime()}));
+          store.ws.send(JSON.stringify({ pong: new Date().getTime() }));
         }
   
         if (res.rep) {
@@ -46,6 +46,7 @@ class App extends React.Component {
         }
   
         if (res.tick) {
+          console.log(res);
           const data = res.tick;
   
           store.onRealTimeCallback({
@@ -54,7 +55,7 @@ class App extends React.Component {
             close: data.close,
             open: data.open,
             high: data.high,
-            low: data.lows
+            low: data.low,
           });
         }
       };
@@ -103,7 +104,7 @@ class App extends React.Component {
         "hide_last_na_study_output", //隐藏最后一次指标输出
         "same_data_requery",
         "side_toolbar_in_fullscreen_mode",
-        'adaptive_logo'
+        'adaptive_logo',
       ],
     });
 
@@ -113,6 +114,7 @@ class App extends React.Component {
       // 出现均线在0刻度，注意数据类型为number
       const colors = ["#e0d283", "#92c580", "#8dc1d9"];
       [5, 10, 30].forEach((time, index) => {
+        //1.15写法 1.14不同
         chart.createStudy("Moving Average", false, false, [time, 'close', 0], {
           'Plot.linewidth': 2,
           "plot.color.0": colors[index],
